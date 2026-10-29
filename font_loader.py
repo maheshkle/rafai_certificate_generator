@@ -163,3 +163,4 @@ def get_font(font_names: Union[str, List[str]], size: int) -> ImageFont.ImageFon
         return ImageFont.load_default(size=size)
     except TypeError:
         return ImageFont.load_default()
+

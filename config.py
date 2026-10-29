@@ -10,11 +10,13 @@ from typing import Tuple
 # Base Directories
 BASE_DIR = Path(__file__).resolve().parent
 ASSETS_DIR = BASE_DIR / "assets"
+FONTS_DIR = ASSETS_DIR / "fonts"
 DEFAULT_OUTPUT_DIR = BASE_DIR / "output"
 SAMPLE_DATA_DIR = BASE_DIR / "sample_data"
 
 # Create directories if they do not exist
 ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+FONTS_DIR.mkdir(parents=True, exist_ok=True)
 DEFAULT_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 SAMPLE_DATA_DIR.mkdir(parents=True, exist_ok=True)
 

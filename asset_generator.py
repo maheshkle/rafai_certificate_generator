@@ -8,30 +8,7 @@ from pathlib import Path
 import math
 from PIL import Image, ImageDraw, ImageFont
 import config
-
-
-def _get_font(font_name: str, size: int) -> ImageFont.ImageFont:
-    """
-    Safely load a TrueType font or fallback to system default.
-    Tries common Windows/Linux fonts before falling back.
-    """
-    font_candidates = [
-        font_name,
-        "georgia.ttf",
-        "arial.ttf",
-        "calibri.ttf",
-        "times.ttf",
-        "segoeui.ttf",
-        "C:\\Windows\\Fonts\\georgia.ttf",
-        "C:\\Windows\\Fonts\\arial.ttf",
-        "C:\\Windows\\Fonts\\calibri.ttf",
-    ]
-    for candidate in font_candidates:
-        try:
-            return ImageFont.truetype(candidate, size)
-        except Exception:
-            continue
-    return ImageFont.load_default()
+from font_loader import get_font as _get_font
 
 
 def create_default_logo(output_path: Path) -> Path:

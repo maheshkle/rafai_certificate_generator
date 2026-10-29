@@ -5,7 +5,7 @@ Features dynamic text scaling, luxury typography, QR verification integration,
 fault-tolerant batch processing, and ZIP package creation.
 """
 
-from typing import List, Dict, Optional, Tuple, Callable
+from typing import List, Dict, Optional, Tuple, Callable, Union
 from pathlib import Path
 from dataclasses import dataclass, field
 import zipfile
@@ -21,6 +21,7 @@ import config
 from excel_handler import StudentRecord
 from qr_generator import generate_qr_image
 import asset_generator
+from font_loader import get_font
 
 
 @dataclass
@@ -48,35 +49,26 @@ class CertificateGenerator:
         self._load_assets()
         self._load_fonts()
 
-    def _get_font(self, font_names: List[str], size: int) -> ImageFont.ImageFont:
-        """Helper to find the first available TrueType font or fallback."""
-        windows_font_dir = Path("C:/Windows/Fonts")
-        for name in font_names:
-            # Check local file or system font
-            candidates = [name, windows_font_dir / name, str(windows_font_dir / name)]
-            for cand in candidates:
-                try:
-                    return ImageFont.truetype(str(cand), size)
-                except Exception:
-                    continue
-        return ImageFont.load_default()
+    def _get_font(self, font_names: Union[str, List[str]], size: int) -> ImageFont.ImageFont:
+        """Helper to find the first available TrueType font or fallback using font_loader."""
+        return get_font(font_names, size)
 
     def _load_fonts(self):
-        """Loads and caches typography hierarchy."""
+        """Loads and caches typography hierarchy with cross-platform font resolution."""
         # Serif Header & Student Name fonts
-        self.font_header_sub = self._get_font(["georgia.ttf", "times.ttf", "arial.ttf"], 22)
-        self.font_title = self._get_font(["georgiab.ttf", "georgia.ttf", "timesbd.ttf", "arialbd.ttf"], 56)
-        self.font_present = self._get_font(["segoeui.ttf", "arial.ttf", "calibri.ttf"], 24)
-        self.font_student_base = lambda sz: self._get_font(["georgiab.ttf", "georgia.ttf", "timesbd.ttf"], sz)
-        self.font_course = self._get_font(["georgiab.ttf", "georgia.ttf", "arialbd.ttf"], 44)
-        self.font_course_split_title = self._get_font(["georgiab.ttf", "georgia.ttf", "arialbd.ttf"], 40)
-        self.font_course_details_base = lambda sz: self._get_font(["georgiai.ttf", "ariali.ttf", "segoeui.ttf", "calibri.ttf"], sz)
-        self.font_course_sub = self._get_font(["ariali.ttf", "georgiai.ttf", "arial.ttf"], 22)
-        self.font_college = self._get_font(["georgiab.ttf", "georgia.ttf", "arialbd.ttf"], 26)
-        self.font_label = self._get_font(["segoeuib.ttf", "arialbd.ttf", "calibri.ttf"], 17)
-        self.font_value = self._get_font(["georgiab.ttf", "georgia.ttf", "arialbd.ttf"], 21)
-        self.font_meta = self._get_font(["arial.ttf", "calibri.ttf"], 16)
-        self.font_footer = self._get_font(["arial.ttf", "calibri.ttf"], 13)
+        self.font_header_sub = self._get_font(["PlayfairDisplay.ttf", "georgia.ttf", "times.ttf", "arial.ttf"], 22)
+        self.font_title = self._get_font(["PlayfairDisplay.ttf", "georgiab.ttf", "georgia.ttf", "timesbd.ttf", "arialbd.ttf"], 56)
+        self.font_present = self._get_font(["PlusJakartaSans.ttf", "segoeui.ttf", "arial.ttf", "calibri.ttf"], 24)
+        self.font_student_base = lambda sz: self._get_font(["PlayfairDisplay.ttf", "georgiab.ttf", "georgia.ttf", "timesbd.ttf"], sz)
+        self.font_course = self._get_font(["PlayfairDisplay.ttf", "georgiab.ttf", "georgia.ttf", "arialbd.ttf"], 44)
+        self.font_course_split_title = self._get_font(["PlayfairDisplay.ttf", "georgiab.ttf", "georgia.ttf", "arialbd.ttf"], 40)
+        self.font_course_details_base = lambda sz: self._get_font(["PlayfairDisplay-Italic.ttf", "PlusJakartaSans-Italic.ttf", "georgiai.ttf", "ariali.ttf", "segoeui.ttf", "calibri.ttf"], sz)
+        self.font_course_sub = self._get_font(["PlayfairDisplay-Italic.ttf", "PlusJakartaSans-Italic.ttf", "ariali.ttf", "georgiai.ttf", "arial.ttf"], 22)
+        self.font_college = self._get_font(["PlusJakartaSans.ttf", "PlayfairDisplay.ttf", "georgiab.ttf", "georgia.ttf", "arialbd.ttf"], 26)
+        self.font_label = self._get_font(["PlusJakartaSans.ttf", "segoeuib.ttf", "arialbd.ttf", "calibri.ttf"], 17)
+        self.font_value = self._get_font(["PlayfairDisplay.ttf", "georgiab.ttf", "georgia.ttf", "arialbd.ttf"], 21)
+        self.font_meta = self._get_font(["PlusJakartaSans.ttf", "arial.ttf", "calibri.ttf"], 16)
+        self.font_footer = self._get_font(["PlusJakartaSans.ttf", "arial.ttf", "calibri.ttf"], 13)
 
     def _load_assets(self):
         """Loads and pre-processes background template, logo, signature, and seal."""
